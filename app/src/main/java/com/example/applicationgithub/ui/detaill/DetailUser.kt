@@ -3,6 +3,7 @@ package com.example.applicationgithub.ui.detaill
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.StringRes
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -35,12 +36,13 @@ class DetailUser : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val username = intent.getStringExtra(USERNAME_KEY)
+        val username: String = intent.getStringExtra(USERNAME_KEY)?:""
+        Log.d("DetailUser", "Received username: $username")
 
         viewModel.isLoading.observe(this) {
             showLoading(it)
         }
-        viewModel.getUser("username")
+        viewModel.getUser(username!!)
         viewModel.listDetail.observe(this) { listUser ->
             listUser?.let {
                 showUser(it)

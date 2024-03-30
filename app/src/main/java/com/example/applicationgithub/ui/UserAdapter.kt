@@ -18,9 +18,13 @@ import com.example.applicationgithub.ui.detaill.DetailUser
 
 class UserAdapter : ListAdapter<ItemsItem, UserAdapter.ListViewHolder>(DIFF_CALLBACK) {
 
-    private var onItemClickListener: ((ItemsItem) -> Unit)? = null
-    fun setOnItemClickListener(listener: (ItemsItem) -> Unit) {
-        onItemClickListener = listener
+    private var onItemClickCallback: OnItemClickCallback? = null
+
+    interface OnItemClickCallback{
+        fun onClick(user: ItemsItem)
+    }
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
     }
     class ListViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -39,10 +43,8 @@ class UserAdapter : ListAdapter<ItemsItem, UserAdapter.ListViewHolder>(DIFF_CALL
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val user = getItem(position)
         holder.bind(user)
-        holder.itemView.setOnClickListener { v ->
-            val intent = Intent(v.context, DetailUser::class.java)
-            v.context.startActivity(intent)
-
+        holder.itemView.setOnClickListener {
+            onItemClickCallback?.onClick(user)
         }
     }
 

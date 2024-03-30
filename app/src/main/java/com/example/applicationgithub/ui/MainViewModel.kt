@@ -22,10 +22,12 @@ class MainViewModel : ViewModel() {
     companion object {
         private const val TAG = "MainViewModel"
     }
+
     init {
         findUser("Arief")
     }
-    fun findUser(query : String){
+
+    fun findUser(query: String) {
         _isLoading.value = true
         val client = ApiConfig.getApiService()
         val call = client.getGithub(query)
@@ -33,13 +35,12 @@ class MainViewModel : ViewModel() {
             override fun onResponse(
                 call: Call<GithubResponse>,
                 response: Response<GithubResponse>
-
             ) {
                 _isLoading.value = false
                 if (response.isSuccessful) {
                     val githubResponse = response.body()
                     if (githubResponse != null) {
-                        _listUser.value = githubResponse.items
+                        _listUser.postValue(githubResponse.items)
                     }
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")

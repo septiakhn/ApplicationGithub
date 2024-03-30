@@ -49,12 +49,13 @@ class MainActivity : AppCompatActivity() {
             setListUserData(listUser)
         }
 
-        UserAdapter.setOnItemClickListener { user ->
-            val intent = Intent(this, DetailUser::class.java)
-            Log.d("TAG", "Item Diklik")
-            intent.putExtra(DetailUser.USERNAME_KEY, "user")
-            startActivity(intent)
-        }
+        UserAdapter.setOnItemClickCallback(object : UserAdapter.OnItemClickCallback {
+            override fun onClick(user: ItemsItem){
+                val intent = Intent(this@MainActivity, DetailUser::class.java)
+                intent.putExtra(DetailUser.USERNAME_KEY, user.login.toString())
+                startActivity(intent)
+            }
+        })
         mainViewModel.isLoading.observe(this) {
             showLoading(it)
         }
