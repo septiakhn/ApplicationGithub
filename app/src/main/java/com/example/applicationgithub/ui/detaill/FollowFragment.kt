@@ -33,6 +33,24 @@ class FollowFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(FollowViewModel::class.java)
+//
+//        showRecyclerList()
+//
+//        viewModel.isLoading.observe(viewLifecycleOwner) {
+//            showLoading(it)
+//        }
+//        arguments?.let {
+//            position = it.getInt(ARG_POSITION)
+//            username = it.getString(ARG_USERNAME)
+//        }
+//        if (position == 1){
+//            binding.testUsername.text = "Get Follower $username"
+//        } else {
+//            binding.testUsername.text = "Get Following $username"
+//        }
+//    }
+        super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(FollowViewModel::class.java)
 
         showRecyclerList()
@@ -59,14 +77,15 @@ class FollowFragment : Fragment() {
         }
     }
 
+
     private fun showRecyclerList() {
         val layoutInflater = LinearLayoutManager(requireContext())
         binding.rvFollow.layoutManager = layoutInflater
     }
 
-    private fun setFollowData(user: List<ItemsItem>) {
+    private fun setFollowData(users: List<ItemsItem>) {
         val adapter = FollowAdapter()
-        adapter.submitList(user)
+        adapter.submitList(users)
         binding.rvFollow.adapter = adapter
     }
 

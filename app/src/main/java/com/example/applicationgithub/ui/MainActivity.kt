@@ -5,26 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.example.applicationgithub.R
-import com.example.applicationgithub.data.response.GithubResponse
 import com.example.applicationgithub.data.response.ItemsItem
-import com.example.applicationgithub.data.retrofit.ApiConfig
 import com.example.applicationgithub.databinding.ActivityMainBinding
 import com.example.applicationgithub.ui.detaill.DetailUser
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class MainActivity : AppCompatActivity() {
-
+class MainActivity : AppCompatActivity(), OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var UserAdapter: UserAdapter
-    private val viewModel by viewModels<MainViewModel>()
+//    private lateinit var userAdapter: UserAdapter
+//    private val viewModel by viewModels<MainViewModel>()
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName
@@ -35,8 +26,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        UserAdapter = UserAdapter()
-        binding.rvUserList.adapter = UserAdapter
 
         val layoutManager = LinearLayoutManager(this)
         binding.rvUserList.layoutManager = layoutManager
@@ -49,15 +38,34 @@ class MainActivity : AppCompatActivity() {
             setListUserData(listUser)
         }
 
-        UserAdapter.setOnItemClickListener { user ->
-            val intent = Intent(this, DetailUser::class.java)
-            Log.d("TAG", "Item Diklik")
-            intent.putExtra(DetailUser.USERNAME_KEY, "user")
-            startActivity(intent)
-        }
+//        val mainVm = ViewModelProvider(
+//            this, ViewModelProvider.NewInstanceFactory()
+//        )[MainViewModel::class.java]
+//
+////        userAdapter = UserAdapter()
+////        binding.rvUserList.adapter = userAdapter
+//
+//        mainVm.listUser.observe(this) { listUser ->
+//            setListUserData(listUser)
+//        }
+//        binding.rvUserList.setOnClickListener { user ->
+//            Log.d("TAG", "Item Diklik")
+//            val intent = Intent(this, DetailUser::class.java)
+//            intent.putExtra(DetailUser.USERNAME_KEY, "user")
+//            startActivity(intent)
+//        }
+//        userAdapter.setOnItemClickCallback(object : UserAdapter.OnItemClickCallback{
+//            override fun onItemClicked(user: ItemsItem) {
+//                Log.d("TAG", "Item Diklik")
+//                val intentToDetailUser = Intent(this@MainActivity, DetailUser::class.java)
+//                intentToDetailUser.putExtra(DetailUser.USERNAME_KEY, user.login)
+//                startActivity(intentToDetailUser)
+//            }
+//        })
         mainViewModel.isLoading.observe(this) {
             showLoading(it)
         }
+//        nanti nyalakan ini kalo search dinyalakan
         with(binding) {
             searchView.setupWithSearchBar(searchBar)
             searchView
@@ -65,14 +73,17 @@ class MainActivity : AppCompatActivity() {
                 .setOnEditorActionListener { textView, actionId, event ->
                     searchBar.setText(searchView.text)
                     searchView.hide()
-                    mainViewModel.findUser(searchBar.text .toString())
+                    /*Punyamu*/
+//                    mainViewModel.findUser(searchBar.text.toString())
+                    /*yang benar*/
+                    mainViewModel.findUser(searchView.text.toString())
                     false
                 }
         }
     }
 
     private fun setListUserData (namaUser: List<ItemsItem>){
-        val adapter = UserAdapter()
+        val adapter = UserAdapter(this)
         adapter.submitList(namaUser)
         binding.rvUserList.adapter = adapter
     }
@@ -83,4 +94,19 @@ class MainActivity : AppCompatActivity() {
             binding.progressBar.visibility = View.GONE
         }
     }
+
+    override fun onItemClick(position: Int) {
+        val intentToDetail = Intent(this, DetailUser::class.java)
+        val user = (binding.rvUserList.adapter as UserAdapter).currentList[position]
+        intentToDetail.putExtra(DetailUser.USERNAME_KEY, user.login)
+        startActivity(intentToDetail)
+    }
+
+    //ini parameternya panjang kamu setting dimana?? tiaa jangan tidur
+//    override fun onItemClick(position: Int) {
+//        val intentToDetail = Intent(this, DetailUser::class.java)
+//        val user = (binding.rvUserList.adapter as UserAdapter).currentList[position]
+//        intentToDetail.putExtra(DetailUser.USERNAME_KEY, user.login)
+//        startActivity(intentToDetail)
+//    }
 }

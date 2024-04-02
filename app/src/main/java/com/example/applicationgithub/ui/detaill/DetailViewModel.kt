@@ -24,10 +24,11 @@ class DetailViewModel : ViewModel() {
         private val TAG = MainActivity::class.java.simpleName
     }
 
-    fun getUser(username : String){
+    fun getUser(users : String){
         _isLoading.value = true
-        val client = ApiConfig.getApiService().getDetailUser(username)
-        client.enqueue(object : Callback<DetailUserResponse> {
+        val client = ApiConfig.getApiService()
+        val call = client.getDetailUser(users)
+        call.enqueue(object : Callback<DetailUserResponse> {
             override fun onResponse(
                 call: Call<DetailUserResponse>,
                 response: Response<DetailUserResponse>

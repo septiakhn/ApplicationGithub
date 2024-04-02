@@ -1,25 +1,21 @@
 package com.example.applicationgithub.ui.detaill
 
-import android.os.Build
+
 import android.os.Bundle
 import android.support.annotation.StringRes
+import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.applicationgithub.R
 import com.example.applicationgithub.data.response.DetailUserResponse
-import com.example.applicationgithub.data.response.ItemsItem
 import com.example.applicationgithub.databinding.ActivityDetailBinding
-import com.example.applicationgithub.ui.MainViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 
 class DetailUser : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
     private val viewModel by viewModels<DetailViewModel>()
-
     companion object {
         const val USERNAME_KEY = "username_key"
 
@@ -29,18 +25,18 @@ class DetailUser : AppCompatActivity() {
             R.string.following
         )
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val username = intent.getStringExtra(USERNAME_KEY)
+        Log.d("Detail User", USERNAME_KEY.toString())
 
         viewModel.isLoading.observe(this) {
             showLoading(it)
         }
-        viewModel.getUser("username")
+        viewModel.getUser("users")
         viewModel.listDetail.observe(this) { listUser ->
             listUser?.let {
                 showUser(it)
@@ -52,7 +48,7 @@ class DetailUser : AppCompatActivity() {
     }
 
     private fun showUser(listUser: DetailUserResponse) {
-        Glide.with(this)
+        Glide.with(this@DetailUser)
             .load(listUser.avatarUrl)
             .circleCrop()
             .into(binding.ivAvatar)
@@ -62,13 +58,14 @@ class DetailUser : AppCompatActivity() {
         binding.tvFollowing.text = "${listUser.following} following"
     }
 
-    private fun setViewPager(username: String) {
+    private fun setViewPager(users: String) {
         val sectionsPagerAdapter = SectionsPagerAdapter(this)
+        sectionsPagerAdapter.username = users
         binding.viewPager.adapter = sectionsPagerAdapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = resources.getString(TAB_TITLES[position])
         }.attach()
-        supportActionBar?.elevation = 0f
+//        supportActionBar?.elevation = 0f
     }
 
     private fun showLoading(isLoading: Boolean) {

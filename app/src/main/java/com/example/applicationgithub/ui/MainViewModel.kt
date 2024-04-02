@@ -20,15 +20,16 @@ class MainViewModel : ViewModel() {
     val isLoading: LiveData<Boolean> = _isLoading
 
     companion object {
-        private const val TAG = "MainViewModel"
+        private val TAG = MainActivity::class.java.simpleName
     }
     init {
-        findUser("Arief")
+        findUser("q")
     }
-    fun findUser(query : String){
+
+    fun findUser(username : String){
         _isLoading.value = true
         val client = ApiConfig.getApiService()
-        val call = client.getGithub(query)
+        val call = client.getGithub(username)
         call.enqueue(object : Callback<GithubResponse> {
             override fun onResponse(
                 call: Call<GithubResponse>,

@@ -1,5 +1,6 @@
 package com.example.applicationgithub.ui
 
+import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -14,40 +15,66 @@ import com.example.applicationgithub.R
 import com.example.applicationgithub.data.response.ItemsItem
 import com.example.applicationgithub.databinding.ItemUserBinding
 import com.example.applicationgithub.ui.detaill.DetailUser
+import com.example.applicationgithub.ui.detaill.FollowAdapter.Companion.DIFF_CALLBACK
 
 
-class UserAdapter : ListAdapter<ItemsItem, UserAdapter.ListViewHolder>(DIFF_CALLBACK) {
+interface OnItemClickListener {
+    fun onItemClick(position: Int)
+}
 
-    private var onItemClickListener: ((ItemsItem) -> Unit)? = null
-    fun setOnItemClickListener(listener: (ItemsItem) -> Unit) {
-        onItemClickListener = listener
-    }
-    class ListViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
+class UserAdapter(private val listener: OnItemClickListener) :
+    ListAdapter<ItemsItem, UserAdapter.ListViewHolder>(DIFF_CALLBACK) {
 
-        fun bind(item: ItemsItem) {
-            binding.tvUsername.text = item.login
-            Glide.with(itemView.context)
-                .load(item.avatarUrl)
-                .into(binding.ivAvatar)
-        }
-    }
+//    private var onItemClickCallback: OnItemClickCallback? = null
+////    private lateinit var onItemClickCallback: OnItemClickCallback
+//    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+//        this.onItemClickCallback = onItemClickCallback
+//    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    //    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+//        this.onItemClickCallback = onItemClickCallback
+//    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        val binding: ItemUserBinding = ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ListViewHolder(binding)
+        val binding: ItemUserBinding =
+            ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ListViewHolder(binding, parent.context, listener)
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val user = getItem(position)
         holder.bind(user)
-        holder.itemView.setOnClickListener { v ->
-            val intent = Intent(v.context, DetailUser::class.java)
-            v.context.startActivity(intent)
+//        holder.itemView.setOnClickListener { onItemClickCallback.onItemClicked( ItemsItem[holder.adapterPosition])
+        //}
+//        interface OnItemClickCallback {
+//            fun onItemClicked(user: ItemsItem)
+//        }
+    }
 
+    class ListViewHolder(
+        private val binding: ItemUserBinding,
+        private val context: Context,
+        private val listener: OnItemClickListener
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(position)
+                }
+            }
+        }
+
+        fun bind(item: ItemsItem) {
+            binding.tvUsername.text = item.login
+            Glide.with(context)
+                .load(item.avatarUrl)
+                .into(binding.ivAvatar)
         }
     }
 
     companion object {
-        val DIFF_CALLBACK = object  : DiffUtil.ItemCallback<ItemsItem>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ItemsItem>() {
             override fun areItemsTheSame(oldItem: ItemsItem, newItem: ItemsItem): Boolean {
                 return oldItem == newItem
             }
@@ -58,3 +85,5 @@ class UserAdapter : ListAdapter<ItemsItem, UserAdapter.ListViewHolder>(DIFF_CALL
         }
     }
 }
+
+//class UserAdapter: RecylerView

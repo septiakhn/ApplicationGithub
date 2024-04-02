@@ -24,10 +24,11 @@ class FollowViewModel: ViewModel() {
         private const val TAG = "FollowViewModel"
     }
 
-    fun getFollowers(user: String) {
+    fun getFollowers(users: String) {
         _isLoading.value = true
-        val client = ApiConfig.getApiService().getDetailFollowers(user)
-        client.enqueue(object : Callback<List<ItemsItem>> {
+        val client = ApiConfig.getApiService()
+        val call = client.getDetailFollowers(users)
+        call.enqueue(object : Callback<List<ItemsItem>> {
             override fun onResponse(
                 call: Call<List<ItemsItem>>,
                 response: Response<List<ItemsItem>>
@@ -49,10 +50,11 @@ class FollowViewModel: ViewModel() {
         })
     }
 
-    fun getFollowing(user: String) {
+    fun getFollowing(users: String) {
         _isLoading.value = true
-        val client = ApiConfig.getApiService().getDetailFollowing(user)
-        client.enqueue(object : Callback<List<ItemsItem>> {
+        val client = ApiConfig.getApiService()
+        val call = client.getDetailFollowing(users)
+        call.enqueue(object : Callback<List<ItemsItem>> {
             override fun onResponse(
                 call: Call<List<ItemsItem>>,
                 response: Response<List<ItemsItem>>
